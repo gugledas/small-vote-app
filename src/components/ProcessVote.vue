@@ -70,7 +70,7 @@
         </div>
       </div>
       <div key="login-form" class="form-login" v-if="isConnecting">
-        <h5 class="sd-title text-left">Connexion</h5>
+        <h5 class="sd-title text-center">Connexion</h5>
         <login-register></login-register>
       </div>
     </transition>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { loginRegister } from "drupal-vuejs";
+import loginRegister from "drupal-vuejs/src/App/components/LoginRegister.vue";
 import users from "../config/users";
 export default {
   name: "ProcessVote",
@@ -262,9 +262,11 @@ $first_color: #08c;
 $second_color: #131d60;
 .form-vote {
   max-width: 700px;
-  text-align: left;
+  text-align: center;
   margin-bottom: 20px;
   position: relative;
+  margin-left: auto;
+  margin-right: auto;
 
   .loading-cover {
     position: absolute;
@@ -418,9 +420,9 @@ $second_color: #131d60;
   }
   .form-login {
     .login-page {
-      max-width: none;
-      margin: 0;
-      margin-top: -10px;
+      //max-width: none;
+      margin-left: auto;
+      margin-right: auto;
       justify-content: flex-start;
       min-height: none;
     }

@@ -5,6 +5,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    //to login
+    form: {
+      name: [{ value: "" }],
+      mail: [{ value: "" }],
+    },
     currentUser: null,
     voteSelected: null,
     user: {

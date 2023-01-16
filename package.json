@@ -6,13 +6,14 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "Dev": "vue-cli-service build --mode development  --dest files --target lib --name smallVote 'src/index.js'",
-    "Prod": "vue-cli-service build --mode production  --dest files --target lib --name smallVote 'src/index.js'"
+    "Dev": "vue-cli-service build --watch --mode development  --dest files --target lib --name smallVote 'src/main.js'",
+    "Prod": "vue-cli-service build --mode production  --dest files --target lib --name smallVote 'src/main.js'"
   },
   "dependencies": {
     "bootstrap-vue": "^2.1.0",
     "core-js": "^3.8.3",
     "drupal-vuejs": "file:../drupal-vuejs",
+    "vee-validate": "^3.4.14",
     "vue": "^2.6.14",
     "vuex": "^3.6.2",
     "wbuutilities": "file:../wbuutilities"
