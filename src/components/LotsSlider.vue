@@ -17,43 +17,17 @@
       <b-carousel-slide
         v-for="(lot, index) in allLots"
         :key="index"
-        img-alt="Nikamex Écrans plats"
+        img-alt=""
         :img-src="lot.image"
-        :caption-htmli="formatCaption(lot.text)"
+        :caption-html="formatCaption(lot.text)"
         caption-tag="div"
       ></b-carousel-slide>
-
-      <!-- Slides with img slot -->
-      <!-- Note the classes .d-block and .img-fluid to prevent browser default image alignment -->
-      <!-- <b-carousel-slide>
-        <template #img>
-          <img
-            class="d-block img-fluid w-100"
-            width="1024"
-            height="480"
-            src="https://picsum.photos/1024/480/?image=55"
-            alt="image slot"
-          />
-        </template>
-      </b-carousel-slide> -->
-
-      <!-- Slide with blank fluid image to maintain slide aspect ratio -->
-      <!-- <b-carousel-slide
-        caption="Blank Image Bro"
-        img-blank
-        img-alt="Blank image"
-      >
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          eros felis, tincidunt a tincidunt eget, convallis vel est. Ut
-          pellentesque ut lacus vel interdum.
-        </p>
-      </b-carousel-slide> -->
     </b-carousel>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "LotsSlider",
   props: {},
@@ -61,26 +35,27 @@ export default {
     return {
       slide: 0,
       sliding: null,
-      allLots: [
-        {
-          image:
-            "https://content.fun-japan.jp/renewal-prod/cms/articles/content/cccdc2edaf2aa2d8304f2bf3326d495f32c76353.jpg",
-          text: "Des écrans plat à gagner",
-        },
-        // {
-        //   image: "https://picsum.photos/1024/780/?image=53",
-        //   text: "10 Motos",
-        // },
-        // {
-        //   image: "https://picsum.photos/1024/780/?image=35",
-        //   text: "Un billet d'avion",
-        // },
-        // {
-        //   image: "https://picsum.photos/1024/780/?image=5",
-        //   text: "Un séjour au Nigéria",
-        // },
-      ],
+      // allLots: [
+      //   {
+      //     image:
+      //       "https://content.fun-japan.jp/renewal-prod/cms/articles/content/cccdc2edaf2aa2d8304f2bf3326d495f32c76353.jpg",
+      //     text: "Des écrans plat à gagner",
+      //   },
+      //   {
+      //     image:
+      //       "https://content.fun-japan.jp/renewal-prod/cms/articles/content/cccdc2edaf2aa2d8304f2bf3326d495f32c76353.jpg",
+      //     text: "Des écrans plat à gagner",
+      //   },
+      // ],
     };
+  },
+  computed: {
+    ...mapState({
+      allLots: (state) => (state.results.lots ? state.results.lots : []),
+    }),
+  },
+  mounted() {
+    //
   },
   methods: {
     onSlideStart() {

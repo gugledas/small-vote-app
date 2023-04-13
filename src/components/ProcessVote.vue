@@ -12,7 +12,7 @@
             <div
               class="option-list"
               :class="{
-                'option-disabled': !form.canDoAction,
+                'option-disabled': !canDoAction,
               }"
             >
               <div
@@ -28,50 +28,54 @@
                 <div class="sc-label">{{ choix.label }}</div>
 
                 <b-button
-                  v-show="form.canDoAction"
+                  v-show="canDoAction"
                   class="btn-vote"
                   type="submit"
                   block
                   variant="primary"
-                  @click="submitForm"
-                  >Voter</b-button
+                  @click="VoteNow($event, choix)"
                 >
+                  Voter
+                </b-button>
 
                 <div
                   class="result-effect"
                   :class="{
-                    'result-effect--on': !form.canDoAction,
+                    'result-effect--on': !canDoAction,
                   }"
                 >
                   <div
                     class="pourcentage-bar"
-                    :style="'height:' + choix.total_votes + '%;'"
+                    :style="
+                      'height:' + getPercentVote(choix.total_votes) + '%;'
+                    "
                   ></div>
-                  <span class="percent-value">{{ choix.total_votes }}%</span>
+                  <span class="percent-value font-weight-bold mb-3">
+                    {{ choix.total_votes }} vote(s)
+                  </span>
                 </div>
               </div>
             </div>
-            <div class="votes" v-show="!form.canDoAction">
-              <b-badge variant="light" class="px-2 py-2">125 votes</b-badge>
-            </div>
-            <div v-show="!form.canDoAction">
-              <!-- <b-button
-                type="submit"
-                block
-                variant="dark"
-                @click="submitForm"
-                :disabled="!form.canDoAction"
-                >Voter</b-button
-              > -->
-              <h3>Merci!</h3>
+            <div class="votes text-light" v-show="!isConnecting">
+              <h4>{{ totalVotes }} votes</h4>
+              <p v-if="canDoAction" class="font-italic font-weight-light">
+                Voter maintenant afin de determiner la repartition des voies.
+              </p>
             </div>
             <hr class="p-2" />
           </form>
         </div>
       </div>
       <div key="login-form" class="form-login" v-if="isConnecting">
-        <h5 class="sd-title text-center">Connexion</h5>
-        <login-register></login-register>
+        <div class="form-login-container">
+          <h5 class="sd-title text-center">Connexion</h5>
+          <login-register
+            actionAfterRegister="emit_even_register"
+            action-after-login="emit_even"
+            :showModalSuccess="false"
+            ref="LoginRegister"
+          ></login-register>
+        </div>
       </div>
     </transition>
     <div>
@@ -84,20 +88,13 @@
         <b-spinner class="align-middle spinner-centered text-light" />
       </div>
     </div>
-    <!-- <b-button
-      type="submit"
-      block
-      variant="dark"
-      @click="submitVote"
-      :disabled="!form.canDoAction"
-      >...</b-button
-    > -->
   </div>
 </template>
 
 <script>
 import loginRegister from "drupal-vuejs/src/App/components/LoginRegister.vue";
 import users from "../config/users";
+import { mapState, mapGetters } from "vuex";
 export default {
   name: "ProcessVote",
   props: {},
@@ -107,151 +104,97 @@ export default {
       form: {
         user: null,
         selected: "",
-        canDoAction: true,
       },
       isSaving: false,
       isConnecting: false,
-      choices: [
-        {
-          logo: "https://cdn.vanguardngr.com/wp-content/uploads/2020/01/UBA-logo-2.gif",
-          label: "UBA - United Bank of Africa",
-          total_votes: 0,
-        },
-        {
-          logo: "https://arda.africa/wp-content/uploads/2022/08/Arda_Member_Logos_MRS.png",
-          label: "MRS",
-          total_votes: 0,
-        },
-        {
-          logo: "https://upload.wikimedia.org/wikipedia/fr/7/77/Dangote_Group_Logo..png",
-          label: "DANGOTE CEMENT",
-          total_votes: 0,
-        },
-        {
-          logo: "https://www.processmaker.com/wp-content/uploads/2020/08/access-bank-logo.png",
-          label: "ACCESS BANK",
-          total_votes: 0,
-        },
-        {
-          logo: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Unionbanklogo.png",
-          label: "UNION BANK",
-          total_votes: 0,
-        },
-      ],
     };
   },
+  computed: {
+    ...mapState({
+      choices: (state) =>
+        state.results.candidats ? state.results.candidats : [],
+      form_connect: (state) => state.form,
+      user_has_voted: (state) =>
+        state.results.user_has_voted ? state.results.user_has_voted : false,
+    }),
+    ...mapGetters(["totalVotes"]),
+    canDoAction() {
+      return this.user_has_voted ? false : true;
+    },
+  },
+  /**
+   * --
+   */
   mounted() {
     this.check_if_user_connected();
-    users.getCurrentUser().then((user) => {
-      //console.log("user login--", user);
-      if (user) {
-        this.$store.dispatch("setConnected", {
-          connected: true,
-          already: true,
-        });
-      }
-    });
+    this.check_if_user_register();
+    this.getCurrentUser();
   },
-  computed: {},
   methods: {
     selectOption(index) {
       this.form.selected = index;
     },
     isSelected(index) {
-      if (this.form.selected == index && this.form.canDoAction) return true;
+      if (this.form.selected == index && this.canDoAction) return true;
     },
-    submitForm(ev) {
+    VoteNow(ev, choix) {
       ev.preventDefault();
-      // this.isSaving = true;
-      console.log("submitForm");
-      this.isConnecting = true;
-      // this.form.canDoAction = false;
-      // this.choices = [
-      //   {
-      //     logo: "https://cdn.vanguardngr.com/wp-content/uploads/2020/01/UBA-logo-2.gif",
-      //     label: "UBA - United Bank of Africa",
-      //     total_votes: 70,
-      //   },
-      //   {
-      //     logo: "https://arda.africa/wp-content/uploads/2022/08/Arda_Member_Logos_MRS.png",
-      //     label: "MRS",
-      //     total_votes: 0,
-      //   },
-      //   {
-      //     logo: "https://upload.wikimedia.org/wikipedia/fr/7/77/Dangote_Group_Logo..png",
-      //     label: "DANGOTE CEMENT",
-      //     total_votes: 20,
-      //   },
-      //   {
-      //     logo: "https://www.processmaker.com/wp-content/uploads/2020/08/access-bank-logo.png",
-      //     label: "ACCESS BANK",
-      //     total_votes: 32,
-      //   },
-      //   {
-      //     logo: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Unionbanklogo.png",
-      //     label: "UNION BANK",
-      //     total_votes: 10,
-      //   },
-      // ];
-    },
-    submitVote(ev) {
-      ev.preventDefault();
-      this.isConnecting = false;
-
-      console.log("submitForm");
-      setTimeout(() => {
-        this.isSaving = true;
-        setTimeout(() => {
-          this.isSaving = false;
-          this.choices = [
-            {
-              logo: "https://cdn.vanguardngr.com/wp-content/uploads/2020/01/UBA-logo-2.gif",
-              label: "UBA - United Bank of Africa",
-              total_votes: 70,
-            },
-            {
-              logo: "https://arda.africa/wp-content/uploads/2022/08/Arda_Member_Logos_MRS.png",
-              label: "MRS",
-              total_votes: 0,
-            },
-            {
-              logo: "https://upload.wikimedia.org/wikipedia/fr/7/77/Dangote_Group_Logo..png",
-              label: "DANGOTE CEMENT",
-              total_votes: 20,
-            },
-            {
-              logo: "https://www.processmaker.com/wp-content/uploads/2020/08/access-bank-logo.png",
-              label: "ACCESS BANK",
-              total_votes: 32,
-            },
-            {
-              logo: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Unionbanklogo.png",
-              label: "UNION BANK",
-              total_votes: 10,
-            },
-          ];
-          this.form.canDoAction = false;
-        }, 2000);
-      }, 500);
+      this.$store.commit("SET_VOTE_SELECTED", choix);
+      // si l'utilisateur est deja connecté
+      if (this.form.user) {
+        this.isConnecting = false;
+        this.setVote();
+      } else this.isConnecting = true;
     },
     check_if_user_connected() {
-      console.log("user login");
       document.addEventListener(
         "login_rx_vuejs__user_is_login",
         () => {
-          console.log("user login");
-          users.getCurrentUser().then((user) => {
-            console.log("user login--", user);
-            // if (user) {
-            // 	this.$store.dispatch("setConnected", {
-            // 		connected: true,
-            // 		already: false,
-            // 	});
-            // }
-          });
+          this.getCurrentUser();
+          // Si l'utilisateur s'est connecté, il a forcement cliquer sur vote
+          this.setVote();
         },
         false
       );
+    },
+    check_if_user_register() {
+      document.addEventListener(
+        "login_rx_vuejs__user_is_register",
+        () => {
+          console.log("this.$refs : ", this.$refs);
+          this.$refs.LoginRegister.connexionUser(this.form_connect);
+        },
+        false
+      );
+    },
+    getCurrentUser() {
+      users.getCurrentUser().then((user) => {
+        this.form.user = user;
+      });
+    },
+    /**
+     * --
+     */
+    setVote() {
+      this.isSaving = true;
+      this.isConnecting = false;
+      this.$store
+        .dispatch("setVote")
+        .then(() => {
+          this.$store.dispatch("loadDatas");
+          this.isSaving = false;
+        })
+        .catch((er) => {
+          console.log("er", er);
+        });
+    },
+    getPercentVote(number) {
+      var percent = 0;
+      number = parseInt(number);
+      if (number && this.totalVotes) {
+        percent = (number / this.totalVotes) * 100;
+      }
+      return percent;
     },
   },
 };
@@ -261,9 +204,7 @@ export default {
 $first_color: #08c;
 $second_color: #131d60;
 .form-vote {
-  max-width: 700px;
   text-align: center;
-  margin-bottom: 20px;
   position: relative;
   margin-left: auto;
   margin-right: auto;
@@ -377,7 +318,7 @@ $second_color: #131d60;
   }
   .result-effect {
     display: flex;
-    align-items: center;
+    align-items: end;
     justify-content: center;
     position: absolute;
     inset: 0;
@@ -388,10 +329,17 @@ $second_color: #131d60;
     &::before {
       content: "";
       position: absolute;
-      background: $second_color;
-      opacity: 0.6;
+      background: rgba($second_color, 50%);
+      background: linear-gradient(
+        180deg,
+        rgba(254, 254, 254, 0.028448879551820738) 0%,
+        rgba(95, 95, 99, 0.5578606442577031) 65%,
+        rgba(46, 46, 46, 0.8211659663865546) 100%
+      );
+      opacity: 1;
       inset: 0;
       z-index: -1;
+      top: 50%;
     }
     &--on {
       z-index: initial;
@@ -412,19 +360,30 @@ $second_color: #131d60;
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: 10%;
     z-index: 2;
     background: $first_color;
     opacity: 0.9;
     transition: height 1.2s;
   }
   .form-login {
+    position: relative;
+    width: 450px;
+    height: 550px;
+    margin: auto;
+    position: relative;
+    // .form-login-container {
+    //   // position: absolute;
+    //   // top: 0;
+    //   // bottom: 0;
+    //   // left: 0;
+    //   // right: 0;
+    // }
     .login-page {
-      //max-width: none;
       margin-left: auto;
       margin-right: auto;
       justify-content: flex-start;
-      min-height: none;
+      min-height: 0;
     }
     .politik-secur {
       display: none;

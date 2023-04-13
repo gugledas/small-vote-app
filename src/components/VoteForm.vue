@@ -10,7 +10,7 @@
       <b-row class="justify-content-between">
         <b-col md="6" class="pl-00 mb-5 pb-5 mb-lg-0 pb-lg-0 block-vote">
           <div class="section-desc">
-            <h4 class="sd-title h3">
+            <h4 class="sd-title h3 font-weight-light">
               Votez pour la meilleur entreprise nigériane au cameroun et tentez
               de gagnez de nombreux lots
             </h4>
@@ -36,6 +36,9 @@ export default {
   props: {
     msg: String,
   },
+  mounted() {
+    this.$store.dispatch("loadDatas");
+  },
 };
 </script>
 
@@ -46,18 +49,19 @@ export default {
   align-items: center;
 }
 .vote-section-form {
-  background-image: url("https://img.freepik.com/premium-vector/award-ceremony-background-with-golden-shapes-light-rays-abstract-luxury-background_156943-1508.jpg?w=2000");
-  background-repeat: no-repeat;
-  background-size: cover;
+  // background-image: url("https://img.freepik.com/premium-vector/award-ceremony-background-with-golden-shapes-light-rays-abstract-luxury-background_156943-1508.jpg?w=2000");
+  // background-repeat: no-repeat;
+  // background-size: cover;
   min-height: 400px;
-  position: relative;
-  &::before {
-    content: "";
-    inset: 0;
-    position: absolute;
-    background-color: black;
-    opacity: 0.7;
-  }
+  //position: relative;
+  //padding: 2rem 0 4rem 0;
+  // &::before {
+  //   content: "";
+  //   inset: 0;
+  //   position: absolute;
+  //   background-color: black;
+  //   opacity: 0.7;
+  // }
   .vsf-content {
     padding-top: 50px;
   }
