@@ -1,25 +1,26 @@
 <template>
   <div class="vote-section-form">
     <div class="vote-section">
-      <!-- <h3 >
-        Votez la meilleur entreprise Nigériane au cameroun et tentez de gagnez
-        les lots suivant
-      </h3> -->
+      <!--  -->
     </div>
     <div class="container-fluid vsf-content">
       <b-row class="justify-content-between">
-        <b-col md="6" class="pl-00 mb-5 pb-5 mb-lg-0 pb-lg-0 block-vote">
+        <b-col
+          md="12"
+          lg="6"
+          class="pl-00 mb-5 pb-5 mb-lg-0 pb-lg-0 block-vote"
+        >
           <div class="section-desc">
             <h4 class="sd-title h3 font-weight-light">
-              Votez pour la meilleur entreprise nigériane au cameroun et tentez
-              de gagnez de nombreux lots
+              Vote for the best Nigerian company in Cameroon and try to win many
+              prizes.
             </h4>
             <div class="list-lots">
               <lots-slider></lots-slider>
             </div>
           </div>
         </b-col>
-        <b-col md="6" class="ml-auto">
+        <b-col md="12" lg="6" class="ml-auto">
           <process-vote></process-vote>
         </b-col>
       </b-row>
@@ -44,6 +45,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+@use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
 .block-vote {
   display: flex;
   align-items: center;
@@ -78,6 +80,9 @@ export default {
 .section-desc {
   max-width: 600px;
   margin: auto;
+  @include media-min(DD) {
+    padding: 0 4rem;
+  }
 }
 .single-lot {
   .sl-lot {

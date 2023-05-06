@@ -74,10 +74,14 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .lots-slide {
-  // .carousel-caption {
-  //   padding: 10px;
-  //   border-radius: 5px;
-  //   background: rgba(black, 0.2);
-  // }
+  box-shadow: 7px 18px 8px 5px #00000042;
+  .carousel-caption {
+    padding: 10px;
+    border-radius: 5px;
+    background: rgba(black, 0.5);
+  }
+  img {
+    border-radius: 4px;
+  }
 }
 </style>

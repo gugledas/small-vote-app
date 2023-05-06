@@ -10,6 +10,7 @@
     "Prod": "vue-cli-service build --mode production  --dest files --target lib --name smallVote 'src/main.js'"
   },
   "dependencies": {
+    "@stephane888/wbu-atomique": "file:../wbu-atomique",
     "bootstrap-vue": "^2.1.0",
     "core-js": "^3.8.3",
     "drupal-vuejs": "file:../drupal-vuejs",

@@ -3,8 +3,8 @@
     <transition name="slide-fade">
       <div key="vote-form" v-if="!isConnecting">
         <div>
-          <h3 class="h1 sd-title">
-            Quel est la meilleur entreprise nigériane au cameroun ?
+          <h3 class="h2 sd-title">
+            What is the best Nigerian company in Cameroon ?
           </h3>
         </div>
         <div class="choice-content">
@@ -201,6 +201,7 @@ export default {
 </script>
 
 <style lang="scss">
+@use "@stephane888/wbu-atomique/scss/wbu-ressources-clean.scss" as *;
 $first_color: #08c;
 $second_color: #131d60;
 .form-vote {
@@ -250,10 +251,9 @@ $second_color: #131d60;
     gap: 20px;
   }
   .select-card {
-    padding: 10px;
-    //cursor: pointer;
+    padding: 0 10px 0 10px 0;
     border-radius: 4px;
-    background-color: white;
+    background-color: rgba(#fff, 0.7);
     box-shadow: 0 1px 3px rgb(0 0 0 / 16%);
     flex-basis: calc(50% - 14px);
     height: 220px;
@@ -268,6 +268,8 @@ $second_color: #131d60;
     position: relative;
     //color: white;
     transition: ease 0.3s;
+    //justify-content: flex-end;
+    overflow: hidden;
     // &::before {
     //   content: "";
     //   width: 20px;
@@ -292,17 +294,22 @@ $second_color: #131d60;
     }
     img {
       //border: 1px solid rgba($first_color, 0.1);
-      padding: 10px;
-      margin: 0 0 2px 0;
+      // padding: 10px;
+      // margin: 0 0 2px 0;
       cursor: pointer;
       border-radius: 4px;
-      width: 100%;
-      height: 100px;
+      width: auto;
+      max-width: 100%;
+      height: 110px;
       object-fit: contain;
+      // position: absolute;
+      // left: 0;
+      // top: 8px;
+      // transform: translateX(40%);
+      // transform-origin: center;
     }
     .sc-label {
-      //  margin-top: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
     &--selected {
       border: 2px solid rgba($first_color, 0.6);
